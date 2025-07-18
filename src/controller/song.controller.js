@@ -1,15 +1,17 @@
 import { Song } from "../model/song.model.js";
 
 export const getAllSong = async (req, res, next) => {
-    try {
-        const song = await Song.find();
-        
-        return res.status(200).json({ message: 'Get All Songs' });
-
-    } catch (error) {
-        next(error);
-    }
-}
+	try {
+		const song = await Song.find().sort({ createdAt: -1 });
+		return res.status(200).json({
+			success: true,
+			message: 'Fetched all songs',
+			data: song,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
 
 export const getSongById = async (req, res, next) => {
     try {
@@ -99,3 +101,81 @@ export const deleteSong = async (req, res, next) => {
         next(error);
     }
 }
+
+// Get 6 random featured song
+export const getFeaturedSong = async (req, res, next) => {
+	try {
+		const song = await Song.aggregate([
+			{ $sample: { size: 6 } },
+			{
+				$project: {
+					_id: 1,
+					songName: 1,
+					artistName: 1,
+					songImageUrl: 1,
+					audioUrl: 1,
+				},
+			},
+		]);
+
+		return res.status(200).json({
+			success: true,
+			message: 'Fetched featured songs',
+			data: song,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+// Get 4 random made-for-you song
+export const getMadeForYouSong = async (req, res, next) => {
+	try {
+		const song = await Song.aggregate([
+			{ $sample: { size: 4 } },
+			{
+				$project: {
+					_id: 1,
+					songName: 1,
+					artistName: 1,
+					songImageUrl: 1,
+					audioUrl: 1,
+				},
+			},
+		]);
+
+		return res.status(200).json({
+			success: true,
+			message: 'Fetched made-for-you songs',
+			data: song,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+// Get 4 random trending songs
+export const getTrendingSong = async (req, res, next) => {
+	try {
+		const song = await Song.aggregate([
+			{ $sample: { size: 4 } },
+			{
+				$project: {
+					_id: 1,
+					songName: 1,
+					artistName: 1,
+					songImageUrl: 1,
+					audioUrl: 1,
+				},
+			},
+		]);
+
+		return res.status(200).json({
+			success: true,
+			message: 'Fetched trending songs',
+			data: song,
+		});
+	} catch (error) {
+		next(error);
+	}
+};

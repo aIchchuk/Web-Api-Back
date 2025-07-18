@@ -4,7 +4,10 @@ import {
     getSongById,
     createSong,
     updateSong,
-    deleteSong
+    deleteSong,
+    getFeaturedSong,
+    getMadeForYouSong,
+    getTrendingSong
 } from "../controller/song.controller.js";
 
 import { fields } from "../middleware/upload.middleware.js";
@@ -27,5 +30,9 @@ router.post(
 
 router.put('/updateSong/:id', updateSong);
 router.delete('/deleteSong/:id', deleteSong);
+
+router.get('/featuredSong', getFeaturedSong);
+router.get('/madeForYouSong', getMadeForYouSong);
+router.get('/trendingSong', getTrendingSong);
 
 export default router;
