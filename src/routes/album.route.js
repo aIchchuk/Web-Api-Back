@@ -4,32 +4,31 @@ import {
   getAlbumById,
   createAlbum,
   updateAlbum,
-  deleteAlbum
+  deleteAlbum,
+  addSongToAlbum,
+  removeSongFromAlbum
 } from "../controller/album.controller.js";
 
-import { fields } from "../middleware/upload.middleware.js"; // CommonJS multer module
+import { fields } from "../middleware/upload.middleware.js";
 
 const router = Router();
 
-// GET /albums - Get all albums
 router.get('/', getAllAlbum);
-
-// GET /albums/:id - Get album by ID
 router.get('/:id', getAlbumById);
 
-// POST /albums - Create a new album (with optional albumImage file)
 router.post(
   '/',
-  fields([
-    { name: 'albumImage', maxCount: 1 }
-  ]),
+  fields([{ name: 'albumImage', maxCount: 1 }]),
   createAlbum
 );
 
-// PUT /albums/:id - Update album
 router.put('/:id', updateAlbum);
-
-// DELETE /albums/:id - Delete album
 router.delete('/:id', deleteAlbum);
+
+// Add song to album
+router.post('/:albumId/songs/:songId', addSongToAlbum);
+
+// Remove song from album
+router.delete('/:albumId/songs/:songId', removeSongFromAlbum);
 
 export default router;

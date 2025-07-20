@@ -32,36 +32,30 @@ export const register = async (req, res, next) => {
   }
 };
 
-export const login = (req, res) => {
-  if (req.isAdmin) {
-    const adminPayload = {
-      id: 'admin',
-      email: process.env.ADMIN_EMAIL,
-      role: 'admin'
+export const login = async (req, res) => {
+  try {
+    const user = req.user || {}; // if not from DB, it's admin
+    const isAdmin = req.isAdmin;
+
+    const payload = {
+      email: user.email || process.env.ADMIN_EMAIL,
+      isAdmin: isAdmin,
     };
 
-    const token = jwt.sign(adminPayload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
 
     return res.status(200).json({
-      message: 'Admin Logged In',
+      message: 'Login successful',
       token,
-      user: adminPayload
+      user: {
+        email: payload.email,
+        isAdmin: payload.isAdmin,
+        ...(user._id && { id: user._id, fullName: user.fullName }) // Only for DB users
+      }
     });
+  } catch (error) {
+    return res.status(500).json({ message: 'Login error', error });
   }
-
-  const user = req.user;
-  const payload = {
-    id: user._id,
-    email: user.email,
-    fullName: user.fullName,
-    role: 'user'
-  };
-
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-  return res.status(200).json({
-    message: 'User Successfully Logged In',
-    token,
-    user: payload
-  });
 };

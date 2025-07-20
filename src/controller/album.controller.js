@@ -27,9 +27,9 @@ export const getAlbumById = async (req, res, next) => {
 export const createAlbum = async (req, res, next) => {
   try {
     const { albumName, artistName, albumImageUrl, song } = req.body;
-    const albumImagePath = req.files.albumImage?.[0]?.path || null;
+    const albumImagePath = req.files?.albumImage?.[0]?.path || null;
 
-    if (!albumName || !artistName || !song) {
+    if (!albumName || !artistName) {
       return res.status(400).json({ message: 'One or more required fields are missing' });
     }
 
@@ -42,7 +42,7 @@ export const createAlbum = async (req, res, next) => {
       artistName,
       albumImage: albumImagePath || null,
       albumImageUrl: albumImageUrl || null,
-      song
+      song: song || [],
     });
 
     await newAlbum.save();
@@ -78,6 +78,52 @@ export const deleteAlbum = async (req, res, next) => {
     }
 
     return res.status(200).json({ message: 'Successfully deleted Album' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Add song to album
+export const addSongToAlbum = async (req, res, next) => {
+  try {
+    const { albumId, songId } = req.params;
+
+    const album = await Album.findById(albumId);
+    if (!album) {
+      return res.status(404).json({ message: "Album not found" });
+    }
+
+    if (!album.song.includes(songId)) {
+      album.song.push(songId);
+      await album.save();
+    }
+
+    return res.status(200).json({
+      message: "Song added to album successfully",
+      data: album,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Remove song from album
+export const removeSongFromAlbum = async (req, res, next) => {
+  try {
+    const { albumId, songId } = req.params;
+
+    const album = await Album.findById(albumId);
+    if (!album) {
+      return res.status(404).json({ message: "Album not found" });
+    }
+
+    album.song = album.song.filter(id => id.toString() !== songId);
+    await album.save();
+
+    return res.status(200).json({
+      message: "Song removed from album successfully",
+      data: album,
+    });
   } catch (error) {
     next(error);
   }
