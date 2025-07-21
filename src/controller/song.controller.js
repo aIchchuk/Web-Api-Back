@@ -1,4 +1,6 @@
+import { nextTick } from "process";
 import { Song } from "../model/song.model.js";
+const backendBaseUrl = "http://localhost:5000"; // or use env
 
 export const getAllSong = async (req, res, next) => {
 	try {
@@ -25,48 +27,69 @@ export const getSongById = async (req, res, next) => {
     }
 }
 
-export const createSong = async (req, res, next) => {
-    try {
-        const { songName, artistName, albumName, songImageUrl, audioUrl } = req.body;
-
-        // Uploaded file paths
-        const songImagePath = req.files.songImage?.[0]?.path || null;
-        const audioFilePath = req.files.audioFile?.[0]?.path || null;
-
-        if (!songName || !artistName) {
-            return res.status(400).json({ message: "Missing required fields (songName, artistName)" });
-        }
-
-        if (!songImagePath && !songImageUrl) {
-            return res.status(400).json({ message: "Provide either songImage file or songImageUrl" });
-        }
-
-        if (!audioFilePath && !audioUrl) {
-            return res.status(400).json({ message: "Provide either audioFile or audioUrl" });
-        }
-
-        const newSong = new Song({
-            songName,
-            artistName,
-            albumName: albumName || null,
-            songImage: songImagePath,
-            songImageUrl: songImageUrl || null,
-            audioFile: audioFilePath,
-            audioUrl: audioUrl || null
-        });
-
-        await newSong.save();
-
-        return res.status(201).json({
-            success: true,
-            message: "Song created successfully",
-            data: newSong
-        });
-
-    } catch (error) {
-        next(error);
-    }
+export const getSongByName = async (req, res, next) => {
+  try {
+    const { songName } = req.params;
+    const songByName = await Song.find({ songName });  // Looks good if your schema uses 'songName' field
+    return res.status(200).json({ message: 'Song Name: Get', data: songByName });
+  } catch (error) {
+    next(error);
+  }
 };
+
+
+export const createSong = async (req, res, next) => {
+  try {
+    const { songName, artistName, albumName, songImageUrl, audioUrl } = req.body;
+
+    const songImageFile = req.files.songImage?.[0];
+    const audioFile = req.files.audioFile?.[0];
+
+    if (!songName || !artistName) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    if (!songImageFile && !songImageUrl) {
+      return res.status(400).json({ message: "Provide songImage file or songImageUrl" });
+    }
+
+    if (!audioFile && !audioUrl) {
+      return res.status(400).json({ message: "Provide audioFile or audioUrl" });
+    }
+
+    const songImage = songImageFile
+	? `${backendBaseUrl}/cover-images/${songImageFile.filename}` // ✅ add filename
+	: songImageUrl;
+
+	const audioFilePath = audioFile
+	? `${backendBaseUrl}/songs/${audioFile.filename}` // ✅ add filename
+	: audioUrl;
+
+
+    const newSong = new Song({
+	songName,
+	artistName,
+	albumName: albumName || null,
+	songImageUrl: songImage,
+	audioUrl: audioFilePath,
+	originalImageFileName: songImageFile?.originalname || null,
+	originalAudioFileName: audioFile?.originalname || null,
+	});
+
+
+    await newSong.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Song created successfully",
+      data: newSong,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 
 export const updateSong = async (req, res, next) => {
     try {

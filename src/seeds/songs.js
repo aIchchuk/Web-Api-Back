@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 import { config } from "dotenv";
 import { Song } from "../model/song.model.js";
 
+// image path = front/public/cover-images
+// audio path = front/public/songs
+
 config();
 
 const songs = [

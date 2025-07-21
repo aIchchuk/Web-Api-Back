@@ -7,7 +7,8 @@ import {
     deleteSong,
     getFeaturedSong,
     getMadeForYouSong,
-    getTrendingSong
+    getTrendingSong,
+    getSongByName
 } from "../controller/song.controller.js";
 
 import { fields } from "../middleware/upload.middleware.js";
@@ -17,6 +18,9 @@ const router = Router();
 router.get('/getAllSong', getAllSong);
 
 router.get('/getSongById/:id', getSongById);
+
+router.get('/getSongByName/:songName', getSongByName);
+
 
 // Use multer to allow both image and audio file uploads
 router.post(

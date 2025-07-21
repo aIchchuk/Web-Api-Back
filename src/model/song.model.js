@@ -30,6 +30,12 @@ const songSchema = new mongoose.Schema({
 		type: String,
 		required: false,
 	},
+	originalImageFileName: { 
+		type: String 
+	},
+    originalAudioFileName: { 
+		type: String 
+	}
 }, { timestamps: true });
 
 export const Song = mongoose.model("Song", songSchema);
