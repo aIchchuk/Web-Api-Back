@@ -1,4 +1,5 @@
 import { Album } from "../model/album.model.js";
+import path from "path";
 
 export const getAllAlbum = async (req, res, next) => {
   try {
@@ -24,23 +25,32 @@ export const getAlbumById = async (req, res, next) => {
   }
 };
 
+
+
 export const createAlbum = async (req, res, next) => {
   try {
     const { albumName, artistName, albumImageUrl, song } = req.body;
-    const albumImagePath = req.files?.albumImage?.[0]?.path || null;
+    const albumImageFullPath = req.files?.albumImage?.[0]?.path || null;
 
     if (!albumName || !artistName) {
       return res.status(400).json({ message: 'One or more required fields are missing' });
     }
 
-    if (!albumImagePath && !albumImageUrl) {
+    if (!albumImageFullPath && !albumImageUrl) {
       return res.status(400).json({ message: 'Provide either albumImage file or albumImageUrl' });
+    }
+
+    let albumImageRelativePath = null;
+    if (albumImageFullPath) {
+      const publicDir = path.resolve("public");
+      albumImageRelativePath = "/" + path.relative(publicDir, albumImageFullPath).replace(/\\/g, "/");
+      // e.g. "/cover-images/albumImage-uuid.jpg"
     }
 
     const newAlbum = new Album({
       albumName,
       artistName,
-      albumImage: albumImagePath || null,
+      albumImage: albumImageRelativePath,
       albumImageUrl: albumImageUrl || null,
       song: song || [],
     });
@@ -52,6 +62,9 @@ export const createAlbum = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
 
 export const updateAlbum = async (req, res, next) => {
   try {

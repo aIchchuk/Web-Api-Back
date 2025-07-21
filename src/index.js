@@ -37,6 +37,7 @@ app.use('/songs', express.static(path.join(__dirname, 'public/songs')));
 app.use('/cover-images', express.static(path.join(__dirname, 'public/cover-images')));
 
 
+
 app.use('/uploads', express.static('uploads'));
 app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
