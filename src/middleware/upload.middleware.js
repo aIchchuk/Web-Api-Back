@@ -15,13 +15,14 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let folderPath;
 
-    if (file.fieldname === "songImage") {
+    if (file.fieldname === "albumImage" || file.fieldname === "songImage") {
       folderPath = path.join(publicBasePath, "cover-images");
     } else if (file.fieldname === "audioFile") {
       folderPath = path.join(publicBasePath, "songs");
     } else {
       folderPath = path.join(publicBasePath, "uploads");
     }
+
 
     fs.mkdir(folderPath, { recursive: true }, (err) => {
       if (err) {

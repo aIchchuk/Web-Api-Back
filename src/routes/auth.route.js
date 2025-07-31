@@ -6,7 +6,7 @@ const router = Router();
 
 router.post('/register', register);
 
-// For login: first authenticate credentials from body, then login controller returns token
+// Login flow: first authenticateUser middleware, then login controller issues JWT
 router.post('/login', authenticateUser, login);
 
 export default router;

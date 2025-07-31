@@ -33,7 +33,9 @@ app.use(express.urlencoded({ extended: true }));
 // Static file serving
 app.use('/songs', express.static(path.join(__dirname, 'public/songs')));
 app.use('/cover-images', express.static(path.join(__dirname, 'public/cover-images')));
-app.use('/uploads', express.static('uploads'));
+
+
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Routes
 app.use('/user', userRoutes);
