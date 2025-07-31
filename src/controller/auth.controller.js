@@ -1,6 +1,6 @@
 import { User } from "../model/user.model.js";
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export const register = async (req, res, next) => {
   try {
@@ -34,17 +34,16 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res) => {
   try {
-    const user = req.user || {}; // if not from DB, it's admin
+    const user = req.user;
     const isAdmin = req.isAdmin;
 
     const payload = {
-      email: user.email || process.env.ADMIN_EMAIL,
+      userId: user._id || null,
+      email: user.email,
       isAdmin: isAdmin,
     };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: '7d',
-    });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
 
     return res.status(200).json({
       message: 'Login successful',
@@ -52,7 +51,7 @@ export const login = async (req, res) => {
       user: {
         email: payload.email,
         isAdmin: payload.isAdmin,
-        ...(user._id && { id: user._id, fullName: user.fullName }) // Only for DB users
+        ...(user._id && { id: user._id, fullName: user.fullName }) // Only DB users have _id and fullName
       }
     });
   } catch (error) {

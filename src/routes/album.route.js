@@ -13,17 +13,19 @@ import { fields } from "../middleware/upload.middleware.js";
 
 const router = Router();
 
-router.get('/', getAllAlbum);
-router.get('/:id', getAlbumById);
+router.get('/getAllAlbum', getAllAlbum);
+router.get('/getAlbumById/:id', getAlbumById);
 
 router.post(
-  '/',
-  fields([{ name: 'albumImage', maxCount: 1 }]),
+  '/createAlbum',
+  fields([
+    { name: 'albumImage', maxCount: 1 }
+  ]),
   createAlbum
 );
 
-router.put('/:id', updateAlbum);
-router.delete('/:id', deleteAlbum);
+router.put('/updateAlbum/:id', updateAlbum);
+router.delete('/deleteAlbum/:id', deleteAlbum);
 
 // Add song to album
 router.post('/:albumId/songs/:songId', addSongToAlbum);

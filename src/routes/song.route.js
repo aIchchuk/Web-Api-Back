@@ -8,7 +8,8 @@ import {
     getFeaturedSong,
     getMadeForYouSong,
     getTrendingSong,
-    getSongByName
+    getSongByName,
+    convertReelToSong
 } from "../controller/song.controller.js";
 
 import { fields } from "../middleware/upload.middleware.js";
@@ -38,5 +39,6 @@ router.delete('/deleteSong/:id', deleteSong);
 router.get('/featuredSong', getFeaturedSong);
 router.get('/madeForYouSong', getMadeForYouSong);
 router.get('/trendingSong', getTrendingSong);
+router.post("/convert-reel", convertReelToSong);
 
 export default router;

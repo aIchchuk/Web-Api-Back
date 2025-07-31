@@ -11,13 +11,11 @@ export const getStat = async (req, res, next) => {
       User.countDocuments(),
     ]);
 
-    // Get unique artist names from both Songs and Albums
     const [songArtists, albumArtists] = await Promise.all([
       Song.distinct("artistName"),
       Album.distinct("artistName"),
     ]);
 
-    // Merge and get unique artist names
     const artistSet = new Set([...songArtists, ...albumArtists]);
     const totalArtist = artistSet.size;
 
@@ -28,6 +26,7 @@ export const getStat = async (req, res, next) => {
       totalAlbum,
     });
   } catch (error) {
-    next(error);
+    console.error("🔥 /stat error:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
