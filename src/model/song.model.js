@@ -35,12 +35,7 @@ const songSchema = new mongoose.Schema({
 	},
     originalAudioFileName: { 
 		type: String 
-	},
-	uploadedBy: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User',
-		required: true,
-	},
+	}
 }, { timestamps: true });
 
 export const Song = mongoose.model("Song", songSchema);

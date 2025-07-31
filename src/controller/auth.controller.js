@@ -1,19 +1,34 @@
 import { User } from "../model/user.model.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export const register = async (req, res, next) => {
   try {
     const { fullName, email, password } = req.body;
-    const exists = await User.findOne({ email });
-    if (exists) return res.status(400).json({ message: "Email already exists" });
 
-    const hashed = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ fullName, email, password: hashed });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
 
-    res.status(201).json({ message: "User registered", user: { id: newUser._id, email } });
-  } catch (err) {
-    next(err);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      fullName,
+      email,
+      password: hashedPassword,
+    });
+
+    res.status(201).json({
+      message: 'User Successfully Registered',
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        fullName: newUser.fullName
+      }
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -25,21 +40,21 @@ export const login = async (req, res) => {
     const payload = {
       userId: user._id || null,
       email: user.email,
-      isAdmin,
+      isAdmin: isAdmin,
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-    res.status(200).json({
-      message: "Login successful",
+    return res.status(200).json({
+      message: 'Login successful',
       token,
       user: {
         email: payload.email,
         isAdmin: payload.isAdmin,
-        ...(user._id && { id: user._id, fullName: user.fullName }),
-      },
+        ...(user._id && { id: user._id, fullName: user.fullName }) // Only DB users have _id and fullName
+      }
     });
-  } catch (err) {
-    res.status(500).json({ message: "Login error", err });
+  } catch (error) {
+    return res.status(500).json({ message: 'Login error', error });
   }
 };

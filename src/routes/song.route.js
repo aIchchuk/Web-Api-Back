@@ -12,10 +12,7 @@ import {
     convertReelToSong
 } from "../controller/song.controller.js";
 
-import { verifyToken, isOwnerOrAdmin } from "../middleware/auth.middleware.js";
-
 import { fields } from "../middleware/upload.middleware.js";
-import { Song } from "../model/song.model.js";
 
 const router = Router();
 
@@ -32,13 +29,12 @@ router.post(
     fields([
         { name: "songImage", maxCount: 1 },
         { name: "audioFile", maxCount: 1 }
-    ]), 
-    verifyToken,
+    ]),
     createSong
 );
 
 router.put('/updateSong/:id', updateSong);
-router.delete('/deleteSong/:id', isOwnerOrAdmin(Song), deleteSong);
+router.delete('/deleteSong/:id', deleteSong);
 
 router.get('/featuredSong', getFeaturedSong);
 router.get('/madeForYouSong', getMadeForYouSong);
