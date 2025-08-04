@@ -2,6 +2,7 @@ import { Song } from "../model/song.model.js";
 import path from "path";
 import { convertReelToMp3 } from "../utils/reelsToMp3.js";
 
+
 const backendBaseUrl = "http://localhost:5000"; // Ideally use env variable
 
 export const getAllSong = async (req, res, next) => {
@@ -221,3 +222,41 @@ export const convertReelToSong = async (req, res) => {
     return res.status(500).json({ message: "Failed to convert reel", error: error.message });
   }
 };
+
+export const uploadImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No image file uploaded" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Image uploaded successfully",
+      data: {
+        filename: req.file.filename,
+        path: `/cover-images/${req.file.filename}`,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const uploadAudio = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No audio file uploaded" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Audio uploaded successfully",
+      data: {
+        filename: req.file.filename,
+        path: `/songs/${req.file.filename}`,
+      },
+    });
+  } catch (error) {
+    next(error)
+  }
+}

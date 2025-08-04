@@ -9,10 +9,13 @@ import {
     getMadeForYouSong,
     getTrendingSong,
     getSongByName,
-    convertReelToSong
+    convertReelToSong,
+    uploadAudio,
+    uploadImage
 } from "../controller/song.controller.js";
 
 import { fields } from "../middleware/upload.middleware.js";
+import { single } from "../middleware/uploads.js";
 
 const router = Router();
 
@@ -40,5 +43,11 @@ router.get('/featuredSong', getFeaturedSong);
 router.get('/madeForYouSong', getMadeForYouSong);
 router.get('/trendingSong', getTrendingSong);
 router.post("/convert-reel", convertReelToSong);
+
+
+
+router.post("/upload-image", single("songImage"), uploadImage);
+router.post("/upload-audio", single("audioFile"), uploadAudio);
+
 
 export default router;
