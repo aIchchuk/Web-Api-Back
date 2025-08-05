@@ -10,6 +10,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    userImage: {
+        type: String,
+        required: false
+    },
+    userImageUrl: {
+        type: String,
+        required: false
+    },
     email: {
         type: String,
         required: true,
